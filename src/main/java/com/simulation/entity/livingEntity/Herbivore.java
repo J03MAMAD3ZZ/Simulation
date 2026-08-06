@@ -27,7 +27,7 @@ public class Herbivore extends LivingEntity {
     public void interactWithTarget(Field field, Coordinate targetPosition) {
         Entity target = field.getEntityByCoordinate(targetPosition).orElse(null);
         if (target instanceof Grass) {
-            field.removeEntity(targetPosition);
+            eatGrass(field, targetPosition);
         }
     }
 }
