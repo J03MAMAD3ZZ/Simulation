@@ -5,12 +5,13 @@ import com.simulation.actions.MaintainPopulaceAction;
 import com.simulation.actions.MoveAction;
 import com.simulation.actions.WorldInitializeAction;
 import com.simulation.field.Field;
-import com.simulation.field.fieldRenderer.ConsoleFieldRender;
+import com.simulation.field.fieldRenderer.FieldRenderer;
 
 import java.util.List;
 
 public class Simulation {
-    private final ConsoleFieldRender renderer = new ConsoleFieldRender();
+    private final Field field;
+    private final FieldRenderer renderer;
     private int turnCounter = 1;
     private final Action initAction = new WorldInitializeAction();
     private final Object lock = new Object();
@@ -18,6 +19,11 @@ public class Simulation {
             new MoveAction(),
             new MaintainPopulaceAction()
     );
+
+    public Simulation(Field field, FieldRenderer renderer) {
+        this.field = field;
+        this.renderer = renderer;
+    }
 
     public void startSimulation(Field field) {
         initAction.makeAction(field);
