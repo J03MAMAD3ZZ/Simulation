@@ -14,7 +14,6 @@ public class EntityFactory {
             case GRASS -> new Grass();
             case ROCK -> new Rock();
             case TREE -> new Tree();
-            default -> throw new IllegalStateException("Unexpected value: " + type);
         };
     }
 }

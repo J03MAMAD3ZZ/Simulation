@@ -1,6 +1,7 @@
 package com.simulation.actions;
 
 
+import com.simulation.config.SimulationConfig;
 import com.simulation.coordinate.Coordinate;
 import com.simulation.entity.Entity;
 import com.simulation.entity.EntityFactory;
@@ -10,17 +11,17 @@ import com.simulation.field.Field;
 import java.util.*;
 
 public class WorldInitializeAction implements Action {
+    private final SimulationConfig config;
+
+    public WorldInitializeAction(SimulationConfig config) {
+        this.config = config;
+    }
 
     @Override
     public void makeAction(Field field) {
         int index = 0;
         List<Coordinate> freeCoordinates = generateGrid(field);
-        Map<EntityType, Integer> entitySpawnAmount = new EnumMap<>(EntityType.class);
-        entitySpawnAmount.put(EntityType.PREDATOR, 2);
-        entitySpawnAmount.put(EntityType.HERBIVORE, 2);
-        entitySpawnAmount.put(EntityType.GRASS, 1);
-        entitySpawnAmount.put(EntityType.ROCK, 1);
-        entitySpawnAmount.put(EntityType.TREE, 1);
+        Map<EntityType, Integer> entitySpawnAmount = config.mapCopy();
 
         for (EntityType type : EntityType.values()) {
             for (int i = 0; i < entitySpawnAmount.get(type); i++) {

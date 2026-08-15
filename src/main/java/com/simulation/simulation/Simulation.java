@@ -1,38 +1,35 @@
 package com.simulation.simulation;
 
 import com.simulation.actions.Action;
-import com.simulation.actions.MaintainPopulaceAction;
 import com.simulation.actions.MoveAction;
 import com.simulation.actions.WorldInitializeAction;
+import com.simulation.config.SimulationConfig;
 import com.simulation.entity.Entity;
 import com.simulation.entity.livingEntity.Herbivore;
 import com.simulation.field.Field;
-import com.simulation.field.fieldRenderer.FieldRenderer;
 
 import java.util.List;
 
 public class Simulation {
-    private final Field field;
-    private final FieldRenderer renderer;
+    private final SimulationConfig config;
     private int turnCounter = 1;
-    private final Action initAction = new WorldInitializeAction();
-    private final List<Action> turnActions = List.of(
-            new MoveAction(),
-            new MaintainPopulaceAction()
-    );
+    private final Action initAction;
+    private final List<Action> turnActions = List.of(new MoveAction());
 
-    public Simulation(Field field, FieldRenderer renderer) {
-        this.field = field;
-        this.renderer = renderer;
+    public Simulation(SimulationConfig config) {
+        this.config = config;
+        this.initAction = new WorldInitializeAction(config);
     }
 
-    public void startSimulation(Field field) {
-        initAction.makeAction(field);
+    public void startSimulation(SimulationConfig config) {
+        initAction.makeAction(config.field());
+        nextTurn(config);
     }
 
-    public void nextTurn(Field field) {
+    public void nextTurn(SimulationConfig config) {
+        Field field = config.field();
         while (!endSimulation()) {
-            renderer.renderField(field);
+            config.renderer().renderField(field);
             printCurrentTurn();
             for (Action action : turnActions) {
                 action.makeAction(field);
@@ -40,14 +37,14 @@ public class Simulation {
             turnCounter++;
 
             try {
-                Thread.sleep(5000);
+                Thread.sleep(2000);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
-        renderer.renderField(field);
+        config.renderer().renderField(field);
         printCurrentTurn();
-        System.out.println("Game Over!");
+        System.out.println("Game Over! All the herbivores are gone!");
     }
 
     private void printCurrentTurn() {
@@ -55,6 +52,7 @@ public class Simulation {
     }
 
     private boolean endSimulation() {
+        Field field = config.field();
         for (Entity entity : field.toMap().values()) {
             if (entity instanceof Herbivore) {
                 return false;
